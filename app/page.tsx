@@ -1,7 +1,5 @@
+import { SatSprint } from "@/components/sat-sprint"
+
 export default function Page() {
-  return (
-    <div className="flex items-center justify-center min-h-screen">
-      <h1 className="text-4xl font-bold">SAT Sprint Works! 🎉</h1>
-    </div>
-  )
+  return <SatSprint />
 }
