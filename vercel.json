@@ -1,6 +1,7 @@
 {
   "buildCommand": "next build",
   "installCommand": "pnpm install",
+  "outputDirectory": ".next",
   "env": {
     "NEXT_PUBLIC_DOMAIN": "purgeprep.xyz"
   },
