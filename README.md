@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # SAT Sprint — Timed SAT Prep Game
 
 A gamified SAT preparation platform where students sharpen their skills through timed challenges in math, reading, and grammar. Features an RPG-style battle system with persistent upgrades and economy tracking.
@@ -222,3 +223,6 @@ For issues, suggestions, or feedback, please open an issue on GitHub.
 ---
 
 **Built with ❤️ for SAT students everywhere**
+=======
+# PurgePrep
+>>>>>>> 409426e4d0e1f466216e9f290ce23bb25f4cd6c0
