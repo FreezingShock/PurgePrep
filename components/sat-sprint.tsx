@@ -128,7 +128,7 @@ export function SatSprint() {
     return clearTimer
   }, [phase, current, answered, perQuestion, handleTimeout, clearTimer])
 
-  useEffect(() => () => respawnRef.current && clearTimeout(respawnRef.current), [])
+  useEffect(() => () => { respawnRef.current && clearTimeout(respawnRef.current); }, [])
 
   // Persist coins to localStorage
   useEffect(() => {
