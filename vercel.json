@@ -1,5 +1,6 @@
 {
   "buildCommand": "next build",
+  "framework": "nextjs",
   "outputDirectory": ".next",
   "env": {
     "NEXT_PUBLIC_DOMAIN": "purgeprep.xyz"
