@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+Disallow: /.next
+Disallow: /api
+
+Sitemap: https://purgeprep.xyz/sitemap.xml
+
+# Crawl delay (optional)
+Crawl-delay: 1
