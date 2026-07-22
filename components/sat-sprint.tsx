@@ -62,6 +62,10 @@ export function SatSprint() {
   const [coinPulse, setCoinPulse] = useState<{ id: number; amount: number } | null>(null)
   const [panel, setPanel] = useState<PanelType | null>(null)
 
+  // Session tracking (per page load)
+  const [sessionCoinsEarned, setSessionCoinsEarned] = useState(0)
+  const [sessionCorrect, setSessionCorrect] = useState(0)
+
   // Battle state
   const maxHp = heroMaxHp(upgrades.armor)
   const [heroHp, setHeroHp] = useState(maxHp)
@@ -183,6 +187,7 @@ export function SatSprint() {
     setEnemyHp(0)
     setStrike({ id: nextEventId(), type: "slay", kills, coins: reward })
     setCoins((c) => c + reward)
+    setSessionCoinsEarned((s: number) => s + reward)
     setCoinPulse({ id: nextEventId(), amount: reward })
     setStats((s) => ({
       ...s,
@@ -210,6 +215,7 @@ export function SatSprint() {
 
     if (index === question.answerIndex) {
       setScore((s) => s + 1)
+      setSessionCorrect((c: number) => c + 1)
       setStats((s) => ({ ...s, correct: s.correct + 1 }))
       setStreak((prev) => {
         const next = prev + 1
@@ -284,6 +290,49 @@ export function SatSprint() {
     }
   }
 
+  // Keyboard controls for answer selection and submission
+  useEffect(() => {
+    if (phase !== "playing" || !question) return
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      const key = e.key.toLowerCase()
+
+      // Answer selection: 1-4 or A-D
+      const answerMap: Record<string, number> = {
+        "1": 0, "a": 0,
+        "2": 1, "b": 1,
+        "3": 2, "c": 2,
+        "4": 3, "d": 3,
+      }
+
+      if (key in answerMap) {
+        e.preventDefault()
+        if (!answered) {
+          setSelected(answerMap[key])
+        }
+      }
+
+      // Submit answer with Enter
+      if (key === "enter") {
+        e.preventDefault()
+        if (selected !== null && !answered) {
+          handleSelect(selected)
+        }
+      }
+
+      // Next question with Space
+      if (key === " ") {
+        e.preventDefault()
+        if (answered) {
+          handleNext()
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown)
+    return () => window.removeEventListener("keydown", handleKeyDown)
+  }, [phase, question, answered, selected, handleSelect, handleNext])
+
   const progress = useMemo(
     () => (deck.length > 0 ? ((current + (answered ? 1 : 0)) / deck.length) * 100 : 0),
     [current, answered, deck.length],
@@ -299,7 +348,14 @@ export function SatSprint() {
       <main className="mx-auto flex w-full max-w-6xl flex-1 flex-col gap-5 px-4 py-6 lg:flex-row lg:items-start lg:py-10">
         {/* Primary column */}
         <div className="mx-auto w-full max-w-2xl lg:mx-0 lg:flex-1">
-          {phase === "start" && <StartScreen onStart={startGame} />}
+          {phase === "start" && (
+            <StartScreen
+              onStart={startGame}
+              sessionCoinsEarned={sessionCoinsEarned}
+              sessionCorrect={sessionCorrect}
+              currentCoins={coins}
+            />
+          )}
 
           {phase === "playing" && question && (
             <div className="flex flex-col gap-5">

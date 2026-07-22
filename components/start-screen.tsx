@@ -10,6 +10,9 @@ export type Filter = Category | "all"
 
 interface StartScreenProps {
   onStart: (filter: Filter, seconds: number) => void
+  sessionCoinsEarned?: number
+  sessionCorrect?: number
+  currentCoins?: number
 }
 
 const filters: { value: Filter; label: string; icon: typeof BookOpen }[] = [
@@ -25,9 +28,11 @@ const times = [
   { value: 45, label: "Relaxed", desc: "45s / question" },
 ]
 
-export function StartScreen({ onStart }: StartScreenProps) {
+export function StartScreen({ onStart, sessionCoinsEarned = 0, sessionCorrect = 0, currentCoins = 0 }: StartScreenProps) {
   const [filter, setFilter] = useState<Filter>("all")
   const [seconds, setSeconds] = useState(30)
+
+  const hasSessionData = sessionCoinsEarned > 0 || sessionCorrect > 0
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col items-center text-center">
@@ -40,6 +45,25 @@ export function StartScreen({ onStart }: StartScreenProps) {
         A timed challenge to sharpen your SAT skills. Answer fast, keep your streak alive, and learn from instant
         explanations.
       </p>
+
+      {hasSessionData && (
+        <div className="mt-8 w-full rounded-xl border border-border bg-gradient-to-br from-secondary/40 to-background/40 p-4">
+          <div className="grid grid-cols-3 gap-3 text-center">
+            <div className="flex flex-col gap-1">
+              <span className="text-2xl font-bold text-accent">{sessionCorrect}</span>
+              <span className="text-xs text-muted-foreground">Correct</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-2xl font-bold text-amber-400">⬥ {sessionCoinsEarned}</span>
+              <span className="text-xs text-muted-foreground">This Session</span>
+            </div>
+            <div className="flex flex-col gap-1">
+              <span className="text-2xl font-bold text-foreground">⬥ {currentCoins}</span>
+              <span className="text-xs text-muted-foreground">Total</span>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="mt-10 w-full text-left">
         <h2 className="mb-3 flex items-center gap-2 text-sm font-medium text-muted-foreground">
