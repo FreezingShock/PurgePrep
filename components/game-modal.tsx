@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect } from "react"
+import { useState, useEffect } from "react"
 import { BarChart3, Backpack, CheckCircle2, Coins, Lock, Store, Swords, Sword, Coins as CoinIcon, Shield, X } from "lucide-react"
 import type { LucideIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
@@ -16,12 +16,6 @@ import {
   type Upgrades,
 } from "@/lib/game"
 import type { PanelType } from "@/components/top-bar"
-
-const upgradeIcons: Record<UpgradeId, LucideIcon> = {
-  blade: Sword,
-  coin: CoinIcon,
-  armor: Shield,
-}
 
 interface GameModalProps {
   type: PanelType
@@ -99,51 +93,89 @@ function ShopContent({
   upgrades: Upgrades
   onBuy: (id: UpgradeId) => void
 }) {
+  const [hoverId, setHoverId] = useState<UpgradeId | null>(null)
+
+  const categories = [
+    { key: "damage", label: "⚔️ Damage", color: "from-red-900/20 to-red-950/10" },
+    { key: "defense", label: "🛡️ Defense", color: "from-blue-900/20 to-blue-950/10" },
+    { key: "economy", label: "💰 Economy", color: "from-yellow-900/20 to-yellow-950/10" },
+    { key: "utility", label: "📚 Utility", color: "from-purple-900/20 to-purple-950/10" },
+  ] as const
+
   return (
-    <div className="flex flex-col gap-3">
-      {UPGRADES.map((def) => {
-        const level = upgrades[def.id]
-        const cost = upgradeCost(def, level)
-        const maxed = cost === null
-        const affordable = !maxed && coins >= cost
-        const Icon = upgradeIcons[def.id]
+    <div className="flex flex-col gap-5">
+      {categories.map((cat) => {
+        const items = UPGRADES.filter((u) => u.category === cat.key)
         return (
-          <div key={def.id} className="flex items-center gap-3 rounded-xl border border-border bg-background/40 p-3">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-primary/15 text-primary ring-1 ring-primary/25">
-              <Icon className="size-5" aria-hidden="true" />
+          <div key={cat.key} className="flex flex-col gap-2">
+            <div className="flex items-center gap-2 px-1">
+              <h3 className="text-sm font-bold text-foreground">{cat.label}</h3>
+              <div className="h-px flex-1 bg-border/40" />
             </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="truncate font-semibold">{def.name}</span>
-                <span className="shrink-0 rounded bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                  Lv {level}/{def.maxLevel}
-                </span>
-              </div>
-              <p className="truncate text-xs text-muted-foreground">{def.description}</p>
-              <p className="mt-0.5 text-xs font-medium text-accent">{def.effect(level)}</p>
+            <div className="grid gap-2">
+              {items.map((def) => {
+                const level = upgrades[def.id]
+                const cost = upgradeCost(def, level)
+                const maxed = cost === null
+                const affordable = !maxed && coins >= cost
+                return (
+                  <div
+                    key={def.id}
+                    className="relative group"
+                    onMouseEnter={() => setHoverId(def.id)}
+                    onMouseLeave={() => setHoverId(null)}
+                  >
+                    <div className={cn(
+                      "flex items-start gap-3 rounded-lg border border-border bg-gradient-to-br p-3",
+                      "transition-all duration-200",
+                      hoverId === def.id ? "border-primary/50 shadow-lg shadow-primary/20" : "bg-background/40",
+                      maxed && "opacity-75"
+                    )}>
+                      <div className="flex size-12 shrink-0 items-center justify-center rounded-lg border-2 border-border bg-secondary/40 text-2xl">
+                        {def.emoji}
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <div className="flex items-center gap-2">
+                          <span className="text-sm font-bold text-foreground">{def.name}</span>
+                          <span className="rounded-sm bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                            Lv {level}/{def.maxLevel}
+                          </span>
+                        </div>
+                        <p className="text-xs text-muted-foreground leading-snug mt-0.5">{def.tagline}</p>
+                        <p className="mt-1 text-xs font-semibold text-accent">{def.effect(level)}</p>
+                      </div>
+                      <Button
+                        size="sm"
+                        disabled={maxed || !affordable}
+                        onClick={() => onBuy(def.id)}
+                        className={cn("shrink-0 h-9", maxed && "opacity-50")}
+                        variant={affordable ? "default" : "secondary"}
+                      >
+                        {maxed ? (
+                          "✓"
+                        ) : (
+                          <span className="flex items-center gap-1 text-xs">
+                            <span>⬥</span>
+                            {cost}
+                          </span>
+                        )}
+                      </Button>
+                    </div>
+                    {hoverId === def.id && (
+                      <div className="absolute left-0 right-0 top-full z-10 mt-1 rounded-lg border border-border bg-secondary/95 p-2 text-xs leading-snug text-foreground backdrop-blur-sm pointer-events-none">
+                        {def.description}
+                      </div>
+                    )}
+                  </div>
+                )
+              })}
             </div>
-            <Button
-              size="sm"
-              disabled={maxed || !affordable}
-              onClick={() => onBuy(def.id)}
-              className={cn("shrink-0", maxed && "opacity-60")}
-              variant={affordable ? "default" : "secondary"}
-            >
-              {maxed ? (
-                "Maxed"
-              ) : (
-                <span className="flex items-center gap-1">
-                  <Coins className="size-3.5" aria-hidden="true" />
-                  {cost}
-                </span>
-              )}
-            </Button>
           </div>
         )
       })}
-      <p className="mt-1 text-center text-xs leading-relaxed text-muted-foreground">
-        Defeat enemies with correct answers to earn coins, then spend them here to grow stronger.
-      </p>
+      <div className="mt-2 rounded-lg border border-border bg-background/40 p-3 text-center text-xs leading-relaxed text-muted-foreground">
+        💡 Answer correctly to defeat enemies and earn coins. Spend coins here to unlock powerful minecraft-style gear and dominate the arena!
+      </div>
     </div>
   )
 }
@@ -154,53 +186,55 @@ function InventoryContent({ upgrades }: { upgrades: Upgrades }) {
   if (owned.length === 0) {
     return (
       <div className="flex flex-col items-center gap-3 py-10 text-center">
-        <Lock className="size-8 text-muted-foreground" aria-hidden="true" />
-        <p className="text-sm text-muted-foreground">
-          No upgrades yet. Visit the Shop to spend your coins on powerful gear.
+        <div className="text-4xl">📦</div>
+        <p className="text-sm font-medium text-foreground">No gear yet</p>
+        <p className="text-xs text-muted-foreground">
+          Visit the Shop to spend your coins on epic minecraft-style gear!
         </p>
       </div>
     )
   }
 
   return (
-    <div className="flex flex-col gap-3">
-      {owned.map((def) => {
-        const level = upgrades[def.id]
-        const Icon = upgradeIcons[def.id]
-        return (
-          <div key={def.id} className="flex items-center gap-3 rounded-xl border border-border bg-background/40 p-3">
-            <div className="flex size-11 shrink-0 items-center justify-center rounded-lg bg-success/15 text-success ring-1 ring-success/25">
-              <Icon className="size-5" aria-hidden="true" />
-            </div>
-            <div className="min-w-0 flex-1">
-              <div className="flex items-center gap-2">
-                <span className="font-semibold">{def.name}</span>
-                <span className="rounded bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
-                  Lv {level}/{def.maxLevel}
-                </span>
+    <div className="flex flex-col gap-4">
+      <div className="grid gap-2">
+        {owned.map((def) => {
+          const level = upgrades[def.id]
+          return (
+            <div key={def.id} className="flex items-start gap-3 rounded-lg border border-green-700/30 bg-gradient-to-br from-green-950/20 to-green-900/10 p-3">
+              <div className="flex size-11 shrink-0 items-center justify-center rounded-lg border border-green-700/50 bg-green-950/30 text-xl">
+                {def.emoji}
               </div>
-              <p className="mt-0.5 flex items-center gap-1 text-xs font-medium text-accent">
-                <CheckCircle2 className="size-3.5 text-success" aria-hidden="true" />
-                {def.effect(level)}
-              </p>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-foreground">{def.name}</span>
+                  <span className="rounded-sm bg-secondary px-1.5 py-0.5 text-[10px] font-medium text-muted-foreground">
+                    Lv {level}/{def.maxLevel}
+                  </span>
+                </div>
+                <p className="mt-1 flex items-center gap-1 text-xs font-semibold text-accent">
+                  <span>✓</span>
+                  {def.effect(level)}
+                </p>
+              </div>
             </div>
-          </div>
-        )
-      })}
-      <div className="mt-1 grid grid-cols-3 gap-2 rounded-xl border border-border bg-background/40 p-3 text-center">
-        <LoadoutStat icon={Sword} label="Kills / hit" value={killsPerCorrect(upgrades.blade)} />
-        <LoadoutStat icon={CoinIcon} label="Coins / kill" value={coinsPerKill(upgrades.coin)} />
-        <LoadoutStat icon={Shield} label="Max HP" value={heroMaxHp(upgrades.armor)} />
+          )
+        })}
+      </div>
+      <div className="rounded-lg border border-border bg-background/40 p-3 grid grid-cols-3 gap-2 text-center">
+        <LoadoutStat emoji="⚔️" label="Hits" value={killsPerCorrect(upgrades.blade)} />
+        <LoadoutStat emoji="⬥" label="Gold/Kill" value={coinsPerKill(upgrades.coin)} />
+        <LoadoutStat emoji="❤️" label="Max HP" value={heroMaxHp(upgrades.armor)} />
       </div>
     </div>
   )
 }
 
-function LoadoutStat({ icon: Icon, label, value }: { icon: LucideIcon; label: string; value: number }) {
+function LoadoutStat({ emoji, label, value }: { emoji: string; label: string; value: number }) {
   return (
     <div className="flex flex-col items-center gap-1">
-      <Icon className="size-4 text-primary" aria-hidden="true" />
-      <span className="font-mono text-lg font-bold tabular-nums">{value}</span>
+      <span className="text-lg">{emoji}</span>
+      <span className="font-mono text-xl font-bold tabular-nums">{value}</span>
       <span className="text-[10px] text-muted-foreground">{label}</span>
     </div>
   )
