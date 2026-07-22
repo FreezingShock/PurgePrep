@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { Flame, Target, Timer as TimerIcon } from "lucide-react"
+import { ArrowLeft, Flame, Target, Timer as TimerIcon } from "lucide-react"
 import { StartScreen, type Filter } from "@/components/start-screen"
 import { QuizCard } from "@/components/quiz-card"
 import { ResultsScreen } from "@/components/results-screen"
@@ -251,6 +251,25 @@ export function SatSprint() {
     setStrike(null)
   }
 
+  const goBack = () => {
+    clearTimer()
+    setPhase("start")
+    setDeck([])
+    setCurrent(0)
+    setSelected(null)
+    setAnswered(false)
+    setTimedOut(false)
+    setScore(0)
+    setStreak(0)
+    setBestStreak(0)
+    setOutcome(null)
+    setHeroHp(heroMaxHp(upgrades.armor))
+    setEnemyHp(enemyMaxForWave(1))
+    setEnemyMaxHp(enemyMaxForWave(1))
+    setDefeated(0)
+    setStrike(null)
+  }
+
   const buyUpgrade = (id: UpgradeId) => {
     const def = UPGRADES.find((u) => u.id === id)
     if (!def) return
@@ -284,6 +303,13 @@ export function SatSprint() {
 
           {phase === "playing" && question && (
             <div className="flex flex-col gap-5">
+              <button
+                onClick={goBack}
+                className="flex w-fit items-center gap-2 rounded-lg border border-muted-foreground/30 px-3 py-1.5 text-sm text-muted-foreground transition-all hover:border-muted-foreground/60 hover:bg-muted/50"
+              >
+                <ArrowLeft className="h-4 w-4" />
+                Back
+              </button>
               <div className="grid grid-cols-3 gap-3">
                 <StatPill icon={Target} label="Score" value={score} accent="primary" />
                 <StatPill icon={Flame} label="Streak" value={streak} accent="destructive" />
