@@ -39,11 +39,13 @@ export function QuizCard({ question, selected, answered, timedOut, onSelect, onN
           const isAnswer = index === question.answerIndex
           const isChosen = index === selected
 
-          let state: "idle" | "correct" | "wrong" | "faded" = "idle"
+          let state: "idle" | "selected" | "correct" | "wrong" | "faded" = "idle"
           if (answered) {
             if (isAnswer) state = "correct"
             else if (isChosen) state = "wrong"
             else state = "faded"
+          } else if (isChosen) {
+            state = "selected"
           }
 
           return (
@@ -56,6 +58,7 @@ export function QuizCard({ question, selected, answered, timedOut, onSelect, onN
                 "flex w-full items-center gap-3 rounded-xl border p-3.5 text-left transition-colors sm:p-4",
                 state === "idle" &&
                   "border-border bg-background hover:border-primary hover:bg-primary/5",
+                state === "selected" && "border-primary bg-primary/10",
                 state === "correct" && "border-success bg-success/10",
                 state === "wrong" && "border-destructive bg-destructive/10",
                 state === "faded" && "border-border bg-background opacity-55",
@@ -64,6 +67,7 @@ export function QuizCard({ question, selected, answered, timedOut, onSelect, onN
               <span
                 className={cn(
                   "flex size-8 shrink-0 items-center justify-center rounded-lg border font-mono text-sm font-semibold",
+                  state === "selected" && "border-primary bg-primary text-primary-foreground",
                   state === "correct" && "border-success bg-success text-success-foreground",
                   state === "wrong" && "border-destructive bg-destructive text-primary-foreground",
                   (state === "idle" || state === "faded") && "border-border text-muted-foreground",

@@ -206,14 +206,18 @@ export function SatSprint() {
     }, 700)
   }
 
-  const handleSelect = (index: number) => {
+  const selectAnswer = (index: number) => {
     if (answered) return
-    clearTimer()
     setSelected(index)
+  }
+
+  const submitAnswer = () => {
+    if (answered || selected === null) return
+    clearTimer()
     setAnswered(true)
     setStats((s) => ({ ...s, answered: s.answered + 1 }))
 
-    if (index === question.answerIndex) {
+    if (selected === question.answerIndex) {
       setScore((s) => s + 1)
       setSessionCorrect((c: number) => c + 1)
       setStats((s) => ({ ...s, correct: s.correct + 1 }))
@@ -316,22 +320,24 @@ export function SatSprint() {
       if (key === "enter") {
         e.preventDefault()
         if (selected !== null && !answered) {
-          handleSelect(selected)
+          submitAnswer()
         }
       }
 
-      // Next question with Space
+      // Space: submit answer if selected, or go to next if already answered
       if (key === " ") {
         e.preventDefault()
         if (answered) {
           handleNext()
+        } else if (selected !== null && !answered) {
+          submitAnswer()
         }
       }
     }
 
     window.addEventListener("keydown", handleKeyDown)
     return () => window.removeEventListener("keydown", handleKeyDown)
-  }, [phase, question, answered, selected, handleSelect, handleNext])
+  }, [phase, question, answered, selected, submitAnswer, handleNext])
 
   const progress = useMemo(
     () => (deck.length > 0 ? ((current + (answered ? 1 : 0)) / deck.length) * 100 : 0),
@@ -398,7 +404,7 @@ export function SatSprint() {
                 selected={selected}
                 answered={answered}
                 timedOut={timedOut}
-                onSelect={handleSelect}
+                onSelect={selectAnswer}
                 onNext={handleNext}
                 isLast={outcome === "lose" || current + 1 >= deck.length}
               />
