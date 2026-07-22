@@ -36,11 +36,11 @@ export function StartScreen({ onStart, sessionCoinsEarned = 0, sessionCorrect = 
 
   return (
     <div className="mx-auto flex w-full max-w-2xl flex-col items-center text-center">
-      <div className="mb-6 flex size-16 items-center justify-center rounded-2xl bg-primary/15 ring-1 ring-primary/25">
+      <div className="mb-6 flex size-16 items-center justify-center rounded-lg liquid-glass border-2 border-primary">
         <GraduationCap className="size-8 text-primary" aria-hidden="true" />
       </div>
 
-      <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl">SAT Sprint</h1>
+      <h1 className="text-balance text-3xl font-bold tracking-tight sm:text-4xl minecraft-title">SAT Sprint</h1>
       <p className="mt-3 max-w-md text-pretty leading-relaxed text-muted-foreground">
         A timed challenge to sharpen your SAT skills. Answer fast, keep your streak alive, and learn from instant
         explanations.

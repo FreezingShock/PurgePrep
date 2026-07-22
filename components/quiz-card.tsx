@@ -22,7 +22,7 @@ export function QuizCard({ question, selected, answered, timedOut, onSelect, onS
   const isCorrect = selected === question.answerIndex
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 sm:p-7">
+    <div className="rounded-lg liquid-glass p-5 sm:p-7">
       <span className="inline-flex items-center rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary">
         {CATEGORY_LABELS[question.category]}
       </span>

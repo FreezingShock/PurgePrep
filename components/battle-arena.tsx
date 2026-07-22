@@ -81,7 +81,7 @@ export function BattleArena({
 
   return (
     <aside
-      className="flex w-full flex-col overflow-hidden rounded-2xl border border-border bg-card lg:w-[340px]"
+      className="flex w-full flex-col overflow-hidden rounded-lg liquid-glass-strong lg:w-[340px]"
       aria-label="Battle arena"
     >
       <div className="flex items-center justify-between gap-2 border-b border-border p-3">

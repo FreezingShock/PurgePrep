@@ -43,7 +43,7 @@ export function TopBar({ coins, pulse, onOpen }: TopBarProps) {
     <header
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="sticky top-0 z-40 flex h-14 items-center justify-between border-b border-border bg-background/80 px-4 backdrop-blur-md"
+      className="sticky top-0 z-40 flex h-14 items-center justify-between px-4 liquid-glass-strong border-b"
     >
       {/* Coin counter — slides in from the left on hover or coin gain */}
       <div className="flex items-center">

@@ -50,13 +50,13 @@ export function GameModal({ type, coins, upgrades, stats, onBuy, onClose }: Game
       aria-label={label}
     >
       <div
-        className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl border border-border bg-card shadow-2xl sm:rounded-2xl"
+        className="flex max-h-[85vh] w-full max-w-lg flex-col overflow-hidden rounded-t-2xl sm:rounded-2xl liquid-glass-strong shadow-2xl"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center justify-between border-b border-border p-4">
+        <div className="flex items-center justify-between border-b border-border/50 p-4">
           <div className="flex items-center gap-2">
             <TitleIcon className="size-5 text-primary" aria-hidden="true" />
-            <h2 className="text-lg font-bold">{label}</h2>
+            <h2 className="text-lg font-bold minecraft-title">{label}</h2>
           </div>
           <div className="flex items-center gap-3">
             <div className="flex items-center gap-1.5 rounded-full border border-amber-400/30 bg-amber-400/10 px-2.5 py-1">

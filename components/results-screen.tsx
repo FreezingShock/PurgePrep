@@ -29,8 +29,8 @@ export function ResultsScreen({ score, total, bestStreak, outcome, onRestart }: 
       {outcome && (
         <div
           className={cn(
-            "mb-4 flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-bold",
-            won ? "bg-success/15 text-success" : "bg-destructive/15 text-destructive",
+            "mb-4 flex items-center gap-2 rounded-lg px-4 py-2 text-sm font-bold liquid-glass border-2",
+            won ? "border-success/50 text-success" : "border-destructive/50 text-destructive",
           )}
         >
           {won ? <Trophy className="size-4" aria-hidden="true" /> : <Skull className="size-4" aria-hidden="true" />}
