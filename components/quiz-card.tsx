@@ -11,13 +11,14 @@ interface QuizCardProps {
   answered: boolean
   timedOut: boolean
   onSelect: (index: number) => void
+  onSubmit: () => void
   onNext: () => void
   isLast: boolean
 }
 
 const optionLabels = ["A", "B", "C", "D", "E"]
 
-export function QuizCard({ question, selected, answered, timedOut, onSelect, onNext, isLast }: QuizCardProps) {
+export function QuizCard({ question, selected, answered, timedOut, onSelect, onSubmit, onNext, isLast }: QuizCardProps) {
   const isCorrect = selected === question.answerIndex
 
   return (
@@ -88,22 +89,29 @@ export function QuizCard({ question, selected, answered, timedOut, onSelect, onN
         })}
       </div>
 
-      {answered && (
+      {(selected !== null || answered) && (
         <div className="mt-5 animate-in fade-in slide-in-from-bottom-2 duration-300">
-          <div
-            className={cn(
-              "mb-4 flex items-center gap-2 text-sm font-semibold",
-              timedOut ? "text-accent" : isCorrect ? "text-success" : "text-destructive",
-            )}
+          {answered && (
+            <>
+              <div
+                className={cn(
+                  "mb-4 flex items-center gap-2 text-sm font-semibold",
+                  timedOut ? "text-accent" : isCorrect ? "text-success" : "text-destructive",
+                )}
+              >
+                {timedOut ? "Time's up!" : isCorrect ? "Correct!" : "Not quite."}
+              </div>
+              <div className="flex gap-3 rounded-xl border border-border bg-secondary/40 p-4">
+                <Lightbulb className="size-5 shrink-0 text-accent" aria-hidden="true" />
+                <p className="text-sm leading-relaxed text-muted-foreground">{question.explanation}</p>
+              </div>
+            </>
+          )}
+          <Button
+            className="mt-5 w-full sm:w-auto sm:px-10"
+            onClick={answered ? onNext : onSubmit}
           >
-            {timedOut ? "Time's up!" : isCorrect ? "Correct!" : "Not quite."}
-          </div>
-          <div className="flex gap-3 rounded-xl border border-border bg-secondary/40 p-4">
-            <Lightbulb className="size-5 shrink-0 text-accent" aria-hidden="true" />
-            <p className="text-sm leading-relaxed text-muted-foreground">{question.explanation}</p>
-          </div>
-          <Button className="mt-5 w-full sm:w-auto sm:px-10" onClick={onNext}>
-            {isLast ? "See Results" : "Next Question"}
+            {answered ? (isLast ? "See Results" : "Next Question") : "Answer (or press Enter/Space)"}
           </Button>
         </div>
       )}

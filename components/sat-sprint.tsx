@@ -405,6 +405,7 @@ export function SatSprint() {
                 answered={answered}
                 timedOut={timedOut}
                 onSelect={selectAnswer}
+                onSubmit={submitAnswer}
                 onNext={handleNext}
                 isLast={outcome === "lose" || current + 1 >= deck.length}
               />
